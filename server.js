@@ -6,22 +6,30 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
+// Serve static files (optional, if you have any)
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
-
+//app.use(express.static(__dirname + '/public'));
+// Listen for socket connections
 io.on('connection', (socket) => {
   console.log('A user connected');
-
-  socket.on('chat message', (msg) => {
-    io.emit('chat message', msg); // Broadcast the message to all connected clients
-  });
-
   socket.on('disconnect', () => {
     console.log('A user disconnected');
   });
+  // Listen for incoming messages
+  socket.on('chat message', (msg) => {
+    // Broadcast the message to all connected clients
+    io.emit('chat message', msg);
+  });
+
+  // Handle disconnection
+
 });
 
-server.listen(3000, () => {
-  console.log('Server listening on *:3000');
+
+const PORT = 3000;
+server.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:3000/ ${PORT}`);
 });
+
